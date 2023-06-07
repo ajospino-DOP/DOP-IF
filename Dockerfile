@@ -26,9 +26,3 @@ RUN mkdir -p /home/jenkins/.ssh/ && \
         touch /home/jenkins/.ssh/known_hosts && \
         chmod -R +r /home/jenkins/.ssh/ && \
         ssh-keyscan -H -t ssh-ed25519 github.com >> /home/jenkins/.ssh/known_hosts
-
-USER root
-RUN mkdir -p /root/.ssh/ && \
-        touch /root/.ssh/known_hosts && \
-        chmod -R +r /root/.ssh/ && \
-        ssh-keyscan -H -t ssh-ed25519 github.com >> /root/.ssh/known_hosts
