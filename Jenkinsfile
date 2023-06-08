@@ -16,21 +16,21 @@ pipeline{
         stage('Validation'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "terraform validate"
+                    sh "cd terraform-deployment && terraform validate"
                 }
             }
         }
         stage('Planning'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "terraform plan -out main.tfplan"
+                    sh "cd terraform-deployment && terraform plan -out main.tfplan"
                 }
             }
         }
         stage('Deploying'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "terraform apply main.tfplan"
+                    sh "cd terraform-deployment && terraform apply main.tfplan"
                 }
             }
         }
