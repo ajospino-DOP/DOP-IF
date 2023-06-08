@@ -8,10 +8,5 @@ terraform {
 }
 
 provider "aws" {
-    region = "us-east-2"
-}
-
-resource "aws_instance" "terraformTest" {
-  ami = "ami-0a695f0d95cefc163"
-  instance_type = "t2.micro"
+    region = var.region
 }
