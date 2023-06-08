@@ -15,3 +15,21 @@ variable "container_port" {
   type = number
   default = 8060 
 }
+
+variable "instance_type" {
+  description = "Instance type for deployment"
+  type = string
+  default = "t2.micro"
+}
+
+variable "max_instance_count" {
+  description = "Maximum amount for instance autoscaling"
+  type = number
+  default = 5
+}
+
+variable "min_instance_count" {
+  description = "Minimum amount for instance autoscaling"
+  type = number
+  default = 1
+}
