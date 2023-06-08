@@ -9,7 +9,7 @@ pipeline{
         stage('Initialization'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "terraform init -from-module=terraform-deployment"
+                    sh "cd terraform-deployment && terraform init"
                 }
             }
         }
