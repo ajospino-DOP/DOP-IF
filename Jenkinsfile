@@ -6,14 +6,10 @@ pipeline{
         AWS_REGION = 'us-east-2'
     }
     stages {
-        stage('Changing into deployment directory'){
-            steps{
-                sh 'cd terraform-deployment'
-            }
-        }
         stage('Initialization'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
+                    sh 'cd terraform-deployment'
                     sh "terraform init"
                 }
             }
@@ -21,6 +17,7 @@ pipeline{
         stage('Validation'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
+                    sh 'cd terraform-deployment'
                     sh "terraform validate"
                 }
             }
@@ -28,6 +25,7 @@ pipeline{
         stage('Planning'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
+                    sh 'cd terraform-deployment'
                     sh "terraform plan -out main.tfplan"
                 }
             }
@@ -35,6 +33,7 @@ pipeline{
         stage('Deploying'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
+                    sh 'cd terraform-deployment'
                     sh "terraform apply main.tfplan"
                 }
             }
