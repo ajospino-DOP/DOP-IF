@@ -1,21 +1,21 @@
 resource "local_file" "docker_run_config" {
   content = jsonencode({
-    "AWSEBDockerrunVersion": "3", 
-    "name":"dop",
-    "image":{       
-      "Name": "${var.image_repository_url}:latest"     
+    "AWSEBDockerrunVersion":"1",
+    "name": "dop", 
+    "Image":{       
+      "Name":"${var.image_repository_url}:latest"     
     },     
-      "ports": [       {         
-        "ContainerPort": var.container_port,
-        "hostPort": var.container_port
-      }     
-    ],   
+    "Ports":[{         
+      "ContainerPort" = var.container_port,
+      "HostPort" = var.container_port
+    }]   
   })
+  
   filename = "${path.module}/Dockerrun.aws.json"
 }
 
 resource "aws_s3_bucket" "docker_run_bucket" {
-  bucket = "docker-run-bucket"
+  bucket = "docker-run-bucket-dop"
   tags = local.tags
 }
 
@@ -34,7 +34,7 @@ resource "aws_s3_bucket_acl" "docker_run_bucket_acl" {
 }
 
 resource "aws_s3_bucket_object" "docker_run_object" {
-    key = "${local_file.docker_run_config.content}.zip"
+    key = "${local.docker_run_config_sha}.zip"
     bucket = aws_s3_bucket.docker_run_bucket.id
     source = data.archive_file.docker_run.output_path
   tags = local.tags
@@ -69,16 +69,16 @@ resource "aws_elastic_beanstalk_application" "eb_app" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "eb_app_version" {
-  name = local_file.docker_run_config.content
+  name = local.docker_run_config_sha
   application = aws_elastic_beanstalk_application.eb_app.name
-  description = "Application version created by Terraform"
+  description = "application version created by terraform"
   bucket = aws_s3_bucket.docker_run_bucket.id
   key = aws_s3_bucket_object.docker_run_object.id
   tags = local.tags
 }
 
 resource "aws_elastic_beanstalk_environment" "eb_env" {
-  name = "dop_env"
+  name = "dop-env"
   application = aws_elastic_beanstalk_application.eb_app.name
   platform_arn = "arn:aws:elasticbeanstalk:${var.region}::platform/Docker running on 64bit Amazon Linux 2/3.5.8"
   version_label = aws_elastic_beanstalk_application_version.eb_app_version.name
@@ -98,15 +98,9 @@ resource "aws_elastic_beanstalk_environment" "eb_env" {
   }
 
   setting {
-    namespace = "aws:autoscaling:launchconfiguration"
+    namespace = "aws:autoscaling:asg"
     name = "MaxSize"
     value = var.max_instance_count
-  }
-  
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
-    name = "MinSize"
-    value = var.min_instance_count
   }
 
   setting {
