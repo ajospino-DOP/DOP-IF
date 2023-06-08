@@ -9,7 +9,7 @@ pipeline{
         stage('Initialization'){
             steps{
                 withAWS(credentials: 'AWS-Key', region: env.AWS_REGION){
-                    sh "cd terraform-deployment && terraform init"
+                    sh "cd terraform-deployment && terraform init -reconfigure"
                 }
             }
         }
